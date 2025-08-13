@@ -3,28 +3,31 @@ import fs from 'fs';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
 
-const isVercel = !!process.env.VERCEL; // Detect deployment environment
+// Detect if running on Vercel (read-only filesystem except /tmp)
+const isVercel = !!process.env.VERCEL;
 
 let loggerTransports = [
   new transports.Console(), // Always log to console
 ];
 
 if (!isVercel) {
-  // Local machine → log to file
-  const logDir = 'logs';
+  // Local environment → use 'logs' folder
+  const logDir = path.join(process.cwd(), 'logs');
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir, { recursive: true });
   }
-  const logFilePath = path.join(logDir, 'combined.log');
-  loggerTransports.push(new transports.File({ filename: logFilePath }));
+  loggerTransports.push(
+    new transports.File({ filename: path.join(logDir, 'combined.log') })
+  );
 } else {
-  // On Vercel → use /tmp for file logging (optional)
+  // Production (Vercel) → use /tmp folder if you want file logs
   const logDir = '/tmp/logs';
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir, { recursive: true });
   }
-  const logFilePath = path.join(logDir, 'combined.log');
-  loggerTransports.push(new transports.File({ filename: logFilePath }));
+  loggerTransports.push(
+    new transports.File({ filename: path.join(logDir, 'combined.log') })
+  );
 }
 
 const logger = createLogger({
