@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
 ### Node ###
-# Logs
+.env
 logs
 *.log
 npm-debug.log*
@@ -32,7 +32,7 @@ coverage
 
 # Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
-.env
+
 
 # Bower dependency directory (https://bower.io/)
 bower_components
